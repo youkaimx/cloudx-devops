@@ -39,5 +39,4 @@ resource "aws_instance" "ec2_instances" {
     "Name" = "${each.value}-instance"
     "Env"  = each.value
   }
-
 }

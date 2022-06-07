@@ -77,12 +77,15 @@ output "dev_user_acess_key_id" {
   value = aws_iam_access_key.dev_user_programmatic_access.id
 }
 
-
+# To output the actual secret key use
+# terraform output -raw dev_user_console_access 
 output "dev_user_secret_key" {
   value = aws_iam_access_key.dev_user_programmatic_access.secret
   sensitive = true
 }
 
+# To output the actual password for the user use
+# terraform output -raw dev_user_console_access 
 output "dev_user_console_access" {
   value = aws_iam_user_login_profile.dev_user_login.password
   sensitive = true
