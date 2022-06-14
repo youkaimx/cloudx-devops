@@ -1,0 +1,1 @@
+This code should satisfy the [VPC Hands on Lab](https://catalog.workshops.aws/general-immersionday/en-US/basic-modules/20-vpc/vpc) in AWS Workshop Studio
