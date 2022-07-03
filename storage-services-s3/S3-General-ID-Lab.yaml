@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This CloudFormation template will produce an EC2 Web Host
+Parameters:
+  AmiID:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Description: The AMI ID - Leave as Default
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  InstanceType:
+    Description: Web Host EC2 instance type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m5.large
+  MyVPC:
+    Description: Select Your VPC (Most Likely the Default VPC)
+    Type: 'AWS::EC2::VPC::Id'
+  MyIP:
+    Description: Please enter your local IP address followed by a /32 to restrict HTTP(80) access. To find your IP use an internet search phrase "What is my IP".
+    Type: String
+    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(32))$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/32
+  PublicSubnet:
+    Description: Select a Public Subnet from your VPC that has access to the internet
+    Type: 'AWS::EC2::Subnet::Id'
+
+Resources:
+  WebhostSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref MyVPC
+      GroupName: !Sub ${AWS::StackName} - Website Security Group
+      GroupDescription: Allow Access to the Webhost on Port 80
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: !Ref MyIP
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} - Web Host Security Group
+  WebServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AmiID
+      InstanceType: !Ref InstanceType
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref WebhostSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !Ref PublicSubnet
+      UserData: 
+        Fn::Base64:
+          !Sub | 
+          #!/bin/sh
+          yum -y update
+          yum -y install httpd
+          amazon-linux-extras install php7.2
+          yum -y install php-mbstring
+          yum -y install telnet
+          case $(ps -p 1 -o comm | tail -1) in
+          systemd) systemctl enable --now httpd ;;
+          init) chkconfig httpd on; service httpd start ;;
+          *) echo "Error starting httpd (OS not using init or systemd)." 2>&1
+          esac
+          if [ ! -f /var/www/html/s3-web-host.tar.gz ]; then
+          cd /var/www/html
+          wget https://workshop-objects.s3.amazonaws.com/general-id/s3_general_lab/s3-web-host.tar
+          tar xvf s3-web-host.tar
+          chown apache:root /var/www/html/labs/s3/s3.conf.php
+          chown apache:root /var/www/html/labs/s3/reset_config/s3.conf.php
+          fi
+          yum -y update
+Outputs:
+  PublicIP:
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - WebServerInstance
+          - PublicIp
+    Description: Newly created webhost Public IP
+  PublicDNS:
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - WebServerInstance
+          - PublicDnsName
+    Description: Newly created webhost Public DNS URL
