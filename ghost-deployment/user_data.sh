@@ -22,7 +22,7 @@ sudo -u ghost_user ghost install local
 mkdir -p /home/ghost_user/ghost/content
 mount -t efs -o tls $EFS_ID:/ /home/ghost_user/ghost/content
 
-cat << EOF > config.development.json
+cat << EOF > current/config.development.json
 
 {
   "url": "http://${LB_DNS_NAME}",
@@ -51,6 +51,7 @@ cat << EOF > config.development.json
   }
 }
 EOF
+# This needs to be in the isntallation path
 
-sudo -u ghost ghost stop
-sudo -u ghost ghost start
+sudo -u ghost_user ghost stop
+sudo -u ghost_user ghost start
