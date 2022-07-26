@@ -14,6 +14,12 @@ resource "aws_iam_role" "ghost_role" {
   assume_role_policy = data.aws_iam_policy_document.ghost_assume_role_policy.json
 }
 
+# 
+# Update IAM Role, add new permissions:
+# "ssm:GetParameter*",
+# "secretsmanager:GetSecretValue",
+# "kms:Decrypt"
+
 data "aws_iam_policy_document" "ghost_policy_document" {
   statement {
     effect = "Allow"
@@ -21,7 +27,10 @@ data "aws_iam_policy_document" "ghost_policy_document" {
       "ec2:Describe*",
       "elastcfilesystem:ClientMount",
       "elasticfilesystem:DescribeFileSystems",
-      "elastcfilesystem:ClientWrite"
+      "elastcfilesystem:ClientWrite",
+      "ssm:GetParameter*",
+      "secretsmanager:GetSecretValue",
+      "kms:Decrypt"
     ]
     resources = [
       "*"

@@ -12,13 +12,16 @@ resource "aws_efs_file_system" "ghost_content" {
 resource "aws_efs_mount_target" "public_a" {
   file_system_id = aws_efs_file_system.ghost_content.id
   subnet_id      = aws_subnet.public_a.id
+  security_groups = [ aws_security_group.ec2_pool.id ]
 }
 
 resource "aws_efs_mount_target" "public_b" {
   file_system_id = aws_efs_file_system.ghost_content.id
   subnet_id      = aws_subnet.public_b.id
+  security_groups = [ aws_security_group.ec2_pool.id ]
 }
 resource "aws_efs_mount_target" "public_c" {
   file_system_id = aws_efs_file_system.ghost_content.id
   subnet_id      = aws_subnet.public_c.id
+  security_groups = [ aws_security_group.ec2_pool.id ]
 }

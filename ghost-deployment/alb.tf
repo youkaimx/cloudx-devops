@@ -29,13 +29,12 @@ resource "aws_lb" "ghost_alb" {
  }
 
  resource "aws_lb_target_group" "ghost_ec2" {
-  
    name               = "ghost-ec2"
    target_type        = "instance"
    protocol           = "HTTP"
    port               = 2368
    vpc_id             = aws_vpc.cloudx.id
-   #health_check {
-   #  path = "/ping"
-   #}
+   health_check {
+     path = "/"
+   }
  }

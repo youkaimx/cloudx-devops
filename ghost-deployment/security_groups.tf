@@ -52,7 +52,10 @@ resource "aws_security_group" "ec2_pool" {
     from_port       = 2368
     to_port         = 2368
     protocol        = "tcp"
-    security_groups = [ aws_security_group.alb.id ]
+    security_groups = [ 
+      aws_security_group.alb.id,
+      aws_security_group.bastion.id 
+    ]
   }
   egress {
     from_port       = 0
