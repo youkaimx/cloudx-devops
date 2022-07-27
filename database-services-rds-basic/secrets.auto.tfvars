@@ -1,0 +1,1 @@
+dbpassword = { username = "awsuser", password = "awspassword", dbname="immersionday", host="awsdb.cdtoc7zwihci.us-east-2.rds.amazonaws.com"}
