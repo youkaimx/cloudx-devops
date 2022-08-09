@@ -1,0 +1,39 @@
+{
+    "TargetHealthDescriptions": [
+        {
+            "Target": {
+                "Id": "i-0a2f692420335ecf1",
+                "Port": 2368
+            },
+            "HealthCheckPort": "2368",
+            "TargetHealth": {
+                "State": "healthy"
+            }
+        },
+        {
+            "Target": {
+                "Id": "i-08fd307b9624eebb8",
+                "Port": 2368
+            },
+            "HealthCheckPort": "2368",
+            "TargetHealth": {
+                "State": "healthy"
+            }
+        }
+    ]
+}
+{
+    "TargetHealthDescriptions": [
+        {
+            "Target": {
+                "Id": "10.10.12.123",
+                "Port": 2368,
+                "AvailabilityZone": "us-east-2c"
+            },
+            "HealthCheckPort": "2368",
+            "TargetHealth": {
+                "State": "healthy"
+            }
+        }
+    ]
+}
