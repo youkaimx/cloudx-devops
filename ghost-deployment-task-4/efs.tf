@@ -1,10 +1,5 @@
 # Create Elastic File System
 # Create EFS file system resource(name=ghost_content)
-
-# From task 4: Update security group
-# name=efs
-# add ingress rule: port=2049, source_security_group={fargate_pool}, protocol=tcp
-
 resource "aws_efs_file_system" "ghost_content" {
   creation_token = "ghost_content"
 
@@ -28,8 +23,6 @@ resource "aws_efs_mount_target" "public_b" {
   subnet_id      = aws_subnet.public_b.id
   security_groups = [ 
         aws_security_group.efs.id
-       # aws_security_group.ec2_pool.id,
-       # aws_security_group.fargate_pool.id
       ]
 }
 resource "aws_efs_mount_target" "public_c" {
@@ -37,7 +30,5 @@ resource "aws_efs_mount_target" "public_c" {
   subnet_id      = aws_subnet.public_c.id
   security_groups = [ 
         aws_security_group.efs.id
-        #aws_security_group.ec2_pool.id,
-        #aws_security_group.fargate_pool.id 
     ]
 }

@@ -125,7 +125,7 @@ resource "aws_vpc_endpoint" "logs-endpoint" {
   service_name = "com.amazonaws.us-east-2.logs"
   vpc_endpoint_type = "Interface"
   security_group_ids = [aws_security_group.fargate_pool.id]
-  subnet_ids = [
+  subnet_ids = [ # Not sure if these are the correct subnets, as the db is not here
     aws_subnet.private_a.id,
     aws_subnet.private_b.id,
     aws_subnet.private_c.id
