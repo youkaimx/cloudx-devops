@@ -52,7 +52,6 @@ resource "aws_route_table_association" "private_rt_private_c" {
 }
 
 
-### Endpoint test
 resource "aws_vpc_endpoint" "ecr-dkr-endpoint" {
   vpc_id       = aws_vpc.cloudx.id
   private_dns_enabled = true
@@ -119,9 +118,11 @@ resource "aws_vpc_endpoint" "efs-endpoint" {
 # create the com.amazonaws.region.logs interface VPC endpoint for CloudWatch Logs.
 # For more information, see Using CloudWatch Logs with interface VPC endpoints in the Amazon 
 # CloudWatch Logs User Guide.
+
 resource "aws_vpc_endpoint" "logs-endpoint" {
   vpc_id       = aws_vpc.cloudx.id
-  private_dns_enabled = true
+  # Error: creating EC2 VPC Endpoint (com.amazonaws.us-east-2.logs): InvalidParameter: private-dns-enabled cannot be set because there is already a conflicting DNS domain for logs.us-east-2.amazonaws.com in the VPC vpc-0439c4c3a4217c88b
+  private_dns_enabled = true  #  --- not needed because of previous s3 private dns?
   service_name = "com.amazonaws.us-east-2.logs"
   vpc_endpoint_type = "Interface"
   security_group_ids = [aws_security_group.fargate_pool.id]
@@ -137,15 +138,17 @@ resource "aws_vpc_endpoint" "logs-endpoint" {
 # console or the AWS Command Line Interface (AWS CLI). For more information, see 
 # Creating an interface endpoint in the Amazon VPC User Guide.
 # Create a VPC endpoint for Amazon RDS API using the service name com.amazonaws.region.rds.
-resource "aws_vpc_endpoint" "rds-endpoint" {
-  vpc_id       = aws_vpc.cloudx.id
-  private_dns_enabled = true
-  service_name = "com.amazonaws.us-east-2.rds"
-  vpc_endpoint_type = "Interface"
-  security_group_ids = [aws_security_group.mysql.id]
-  subnet_ids = [
-    aws_subnet.private_a.id,
-    aws_subnet.private_b.id,
-    aws_subnet.private_c.id
- ]
-}
+# ? Not needed? Error: creating EC2 VPC Endpoint (com.amazonaws.us-east-2.rds): InvalidParameter: private-dns-enabled cannot be set because there is already a conflicting DNS domain for rds.us-east-2.amazonaws.com in the VPC vpc-0439c4c3a4217c88b
+# Not needed for SQL? 
+### resource "aws_vpc_endpoint" "rds-endpoint" {
+###   vpc_id       = aws_vpc.cloudx.id
+###   private_dns_enabled = true
+###   service_name = "com.amazonaws.us-east-2.rds"
+###   vpc_endpoint_type = "Interface"
+###   security_group_ids = [aws_security_group.mysql.id]
+###   subnet_ids = [
+###     aws_subnet.private_a.id,
+###     aws_subnet.private_b.id,
+###     aws_subnet.private_c.id
+###  ]
+### }
